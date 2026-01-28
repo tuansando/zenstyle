@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-cream text-zen-900 font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-zen;
+  }
+}
+
+@layer components {
+  .btn-zen {
+    @apply px-8 py-3 bg-zen-600 text-white rounded-lg font-medium 
+           hover:bg-zen-700 transition-all duration-300 
+           shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+  }
+
+  .btn-zen-outline {
+    @apply px-8 py-3 border-2 border-zen-600 text-zen-600 rounded-lg font-medium
+           hover:bg-zen-600 hover:text-white transition-all duration-300;
+  }
+
+  .card-zen {
+    @apply bg-white rounded-2xl shadow-lg p-6 
+           hover:shadow-xl transition-all duration-300 
+           border border-zen-100;
+  }
+
+  .input-zen {
+    @apply w-full px-4 py-3 border border-zen-200 rounded-lg 
+           focus:outline-none focus:ring-2 focus:ring-zen-500 focus:border-transparent
+           transition-all duration-300 bg-white;
+  }
+
+  .section-zen {
+    @apply py-20 px-4;
+  }
+
+  .container-zen {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .text-gradient-zen {
+    @apply bg-gradient-to-r from-zen-600 to-zen-800 bg-clip-text text-transparent;
+  }
+
+  .divider-zen {
+    @apply w-20 h-1 bg-gradient-to-r from-zen-500 to-zen-700 mx-auto my-8 rounded-full;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f9f7f4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b38f5d;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9d7a4f;
+}
+
+/* Loading animation */
+.loader-zen {
+  border: 3px solid #f3ede3;
+  border-top: 3px solid #b38f5d;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Zen decorative elements */
+.zen-circle {
+  @apply w-64 h-64 rounded-full bg-gradient-to-br from-zen-200 to-zen-300 
+         opacity-20 absolute blur-3xl;
+}

@@ -1,0 +1,63 @@
+    /**
+     * Update appointment (Client can update their own pending appointments)
+     */
+    public function update(Request $request, $id)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $appointment = Appointment::findOrFail($id);
+
+        // Client can only update their own appointments
+        if ($user->role === 'Client' && $appointment->client_id !== $user->id) {
+            return response()->json([
+                'message' => 'Unauthorized to update this appointment'
+            ], 403);
+        }
+
+        // Can only update pending appointments
+        if ($appointment->status !== 'Pending') {
+            return response()->json([
+                'message' => 'Can only update pending appointments (current status: ' . $appointment->status . ')'
+            ], 400);
+        }
+
+        // Validate new appointment date
+        $request->validate([
+            'appointment_date' => 'required|date|after:now'
+        ]);
+
+        $newAppointmentDate = Carbon::parse($request->appointment_date);
+        
+        // Calculate duration from existing appointment details
+        $totalDuration = AppointmentDetail::where('appointment_id', $appointment->appointment_id)
+            ->join('services', 'appointment_details.service_id', '=', 'services.id')
+            ->sum('services.duration_minutes');
+        
+        $newEndTime = (clone $newAppointmentDate)->addMinutes($totalDuration);
+
+        // Check if staff is available at new time
+        $isConflict = Appointment::where('staff_id', $appointment->staff_id)
+            ->where('appointment_id', '!=', $id) // Exclude current appointment
+            ->whereIn('status', ['Pending', 'Confirmed'])
+            ->where(function ($query) use ($newAppointmentDate, $newEndTime) {
+                $query->where('appointment_date', '<', $newEndTime)
+                      ->where('end_time', '>', $newAppointmentDate);
+            })
+            ->exists();
+
+        if ($isConflict) {
+            return response()->json([
+                'message' => 'The selected time conflicts with another appointment. Please choose a different time.'
+            ], 422);
+        }
+
+        // Update appointment
+        $appointment->appointment_date = $newAppointmentDate;
+        $appointment->end_time = $newEndTime;
+        $appointment->save();
+
+        return response()->json([
+            'message' => 'Appointment updated successfully',
+            'data' => $appointment->load(['details.service', 'user', 'staff'])
+        ]);
+    }

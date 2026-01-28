@@ -1,0 +1,459 @@
+{
+	"info": {
+		"name": "ZenStyle Salon - Role-Based API Testing",
+		"description": "Complete API collection with Admin/Staff/Client role-based access",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api"
+		},
+		{
+			"key": "admin_token",
+			"value": ""
+		},
+		{
+			"key": "staff_token",
+			"value": ""
+		},
+		{
+			"key": "client_token",
+			"value": ""
+		}
+	],
+	"item": [
+		{
+			"name": "1. AUTHENTICATION",
+			"item": [
+				{
+					"name": "Register Client",
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"url": "{{base_url}}/register",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"client1\",\n    \"email\": \"client1@gmail.com\",\n    \"password\": \"password123\",\n    \"phone_number\": \"0901234567\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Login Admin",
+					"event": [{
+						"listen": "test",
+						"script": {
+							"exec": ["pm.environment.set(\"admin_token\", pm.response.json().access_token);"]
+						}
+					}],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"url": "{{base_url}}/login",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@zenstyle.com\",\n    \"password\": \"password123\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Login Client",
+					"event": [{
+						"listen": "test",
+						"script": {
+							"exec": ["pm.environment.set(\"client_token\", pm.response.json().access_token);"]
+						}
+					}],
+					"request": {
+						"method": "POST",
+						"header": [{"key": "Content-Type", "value": "application/json"}],
+						"url": "{{base_url}}/login",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"client1@gmail.com\",\n    \"password\": \"password123\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/logout"
+					}
+				}
+			]
+		},
+		{
+			"name": "2. ADMIN - User Management",
+			"item": [
+				{
+					"name": "Create Staff Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"url": "{{base_url}}/users",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Stylist A\",\n    \"username\": \"stylist_a\",\n    \"email\": \"stylist.a@zenstyle.com\",\n    \"password\": \"password123\",\n    \"role\": \"Stylist\",\n    \"phone_number\": \"0901234567\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/users"
+					}
+				},
+				{
+					"name": "Get User Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/users/1"
+					}
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"url": "{{base_url}}/users/3",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Stylist A Updated\",\n    \"phone_number\": \"0987654321\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Lock User Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/users/3/lock"
+					}
+				},
+				{
+					"name": "Unlock User Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/users/3/unlock"
+					}
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/users/3"
+					}
+				}
+			]
+		},
+		{
+			"name": "3. CLIENT - Appointments",
+			"item": [
+				{
+					"name": "Book Appointment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"url": "{{base_url}}/booking",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"staff_id\": 2,\n    \"appointment_date\": \"2026-01-20 10:00:00\",\n    \"service_ids\": [1, 2]\n}"
+						}
+					}
+				},
+				{
+					"name": "My Appointments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/my-appointments"
+					}
+				},
+				{
+					"name": "View Appointment Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/appointments/1"
+					}
+				},
+				{
+					"name": "Cancel My Appointment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/appointments/1/cancel"
+					}
+				}
+			]
+		},
+		{
+			"name": "4. STAFF - Appointments Management",
+			"item": [
+				{
+					"name": "View All Appointments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/appointments"
+					}
+				},
+				{
+					"name": "Update Appointment Status - Confirmed",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"url": "{{base_url}}/appointments/1/status",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"Confirmed\"\n}"
+						}
+					}
+				},
+				{
+					"name": "Update Appointment Status - Completed",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"url": "{{base_url}}/appointments/1/status",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"Completed\"\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. CLIENT - Orders",
+			"item": [
+				{
+					"name": "Place Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"url": "{{base_url}}/orders",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"products\": [\n        {\"product_id\": 1, \"quantity\": 2, \"unit_price\": 150000},\n        {\"product_id\": 2, \"quantity\": 1, \"unit_price\": 250000}\n    ]\n}"
+						}
+					}
+				},
+				{
+					"name": "My Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/orders"
+					}
+				},
+				{
+					"name": "View Order Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/orders/1"
+					}
+				},
+				{
+					"name": "Cancel Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/orders/1/cancel"
+					}
+				}
+			]
+		},
+		{
+			"name": "6. CLIENT - Feedback",
+			"item": [
+				{
+					"name": "Submit Feedback",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"url": "{{base_url}}/feedbacks",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"appointment_id\": 1,\n    \"rating\": 5,\n    \"comments\": \"Excellent service!\"\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "7. PROFILE Management",
+			"item": [
+				{
+					"name": "Get My Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/profile"
+					}
+				},
+				{
+					"name": "Update My Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{client_token}}"},
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"url": "{{base_url}}/profile",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Client Updated Name\",\n    \"phone_number\": \"0987654321\"\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "8. ADMIN - Delete Operations",
+			"item": [
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/products/1"
+					}
+				},
+				{
+					"name": "Delete Service",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/services/1"
+					}
+				},
+				{
+					"name": "Delete Blog",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{"key": "Authorization", "value": "Bearer {{admin_token}}"},
+							{"key": "Accept", "value": "application/json"}
+						],
+						"url": "{{base_url}}/blogs/1"
+					}
+				}
+			]
+		},
+		{
+			"name": "9. PUBLIC - View Catalogs",
+			"item": [
+				{
+					"name": "View Services",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Accept", "value": "application/json"}],
+						"url": "{{base_url}}/services"
+					}
+				},
+				{
+					"name": "View Products",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Accept", "value": "application/json"}],
+						"url": "{{base_url}}/products"
+					}
+				},
+				{
+					"name": "View Blogs",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Accept", "value": "application/json"}],
+						"url": "{{base_url}}/blogs"
+					}
+				},
+				{
+					"name": "View Feedbacks",
+					"request": {
+						"method": "GET",
+						"header": [{"key": "Accept", "value": "application/json"}],
+						"url": "{{base_url}}/feedbacks"
+					}
+				}
+			]
+		}
+	]
+}
