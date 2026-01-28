@@ -36,7 +36,7 @@ ZenStyle Salon offers beauty services including haircuts, manicures, skincare, a
 Open Command Prompt (CMD) or Git Bash:
 
 ```bash
-cd C:\xampp\htdocs
+/Applications/XAMPP/xamppfiles/htdocs
 git clone https://github.com/tuansando/zenstyle.git
 ```
 
