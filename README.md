@@ -42,7 +42,7 @@ git clone https://github.com/tuansando/zenstyle.git
 
 ## 📂 Documentation
 
-The following resources are included in the main folder:
+The following resources are included in the Documents folder:
 
 - **Installation Guide**: Instructions for setting up the project
 - **Database Source**: `zenstyle_db.sql`
