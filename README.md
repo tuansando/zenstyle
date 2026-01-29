@@ -46,7 +46,7 @@ The following resources are included in the Documents folder:
 
 - **Installation Guide**: Instructions for setting up the project
 - **Database Source**: `zenstyle_db.sql`
-- **Video Demonstration**: [https://youtu.be/eqw89cXJm-U?si=MSJvpBmaf4UA3a0\_](https://youtu.be/eqw89cXJm-U?si=MSJvpBmaf4UA3a0_)
+- **Video Demonstration**: [https://www.youtube.com/watch?v=7sw_KhqnsEU](https://youtu.be/7sw_KhqnsEU)
 
 ## 🙏 Acknowledgements
 
